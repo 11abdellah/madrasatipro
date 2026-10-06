@@ -10,7 +10,8 @@
     "postinstall": "prisma generate",
     "db:setup": "node scripts/configure-db.mjs",
     "db:push": "prisma db push",
-    "db:seed": "node scripts/seed_payment_and_platform_settings.mjs"
+    "db:seed": "node scripts/seed-complete.mjs",
+    "create:admin": "node scripts/create-admin.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.21.1",
