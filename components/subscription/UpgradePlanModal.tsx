@@ -33,7 +33,8 @@ export const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.plans) && data.plans.length > 0) {
-          setApiPlans(data.plans);
+          const activeOnly = data.plans.filter((p: any) => p.isActive !== false);
+          setApiPlans(activeOnly);
         }
       })
       .catch((err) => {
@@ -118,8 +119,9 @@ export const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
     },
   ];
 
-  const plans = apiPlans.length > 0
-    ? apiPlans.map((p) => {
+  const activeApiPlans = apiPlans.filter((p) => p.isActive !== false);
+  const plans = (activeApiPlans.length > 0 ? activeApiPlans : defaultPlans.filter((p) => p.slug !== "starter"))
+    .map((p) => {
         const slug = p.slug || "";
         const isPro = slug === "pro" || slug === "professional";
         const isFree = slug === "free" || p.priceDZD === 0;
@@ -176,8 +178,7 @@ export const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
           },
           features: featuresList,
         };
-      })
-    : defaultPlans;
+      });
 
   const handleRequestUpgrade = (planName: string, planPrice: number) => {
     const priceText = planPrice === 0 ? "مجاناً" : `${formatDZD(planPrice)} / ${selectedPeriod === "annual" ? "سنوياً" : "شهرياً"}`;
@@ -243,7 +244,7 @@ export const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
         </div>
 
         {/* Plans Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className={`grid grid-cols-1 md:grid-cols-2 ${plans.length <= 3 ? "lg:grid-cols-3" : "lg:grid-cols-4"} gap-4`}>
           {plans.map((p) => {
             const isCurrent = currentPlanSlug.toLowerCase().includes(p.slug);
             const price = selectedPeriod === "annual" ? p.priceAnnual : p.priceMonthly;

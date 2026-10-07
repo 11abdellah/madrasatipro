@@ -4,10 +4,16 @@ import { getCurrentSession } from "@/lib/auth/session";
 
 export const dynamic = "force-dynamic";
 
-// GET /api/super-admin/plans - Fetch all active subscription plans with subscribers count
+// GET /api/super-admin/plans - Fetch subscription plans (active only by default, or all if includeInactive=true)
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = new URL(req.url);
+    const includeInactive = searchParams.get("includeInactive") === "true";
+
+    const where = includeInactive ? {} : { isActive: true };
+
     const plans = await prisma.subscriptionPlan.findMany({
+      where,
       orderBy: { priceDZD: "asc" },
       include: {
         _count: {

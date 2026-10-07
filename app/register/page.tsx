@@ -54,12 +54,13 @@ export default function RegisterPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.plans && data.plans.length > 0) {
-          setPlans(data.plans);
+          const activePlans = data.plans.filter((p: any) => p.isActive !== false);
+          setPlans(activePlans);
           const params = new URLSearchParams(window.location.search);
           const requestedPlan = params.get("plan");
 
           if (requestedPlan) {
-            const found = data.plans.find(
+            const found = activePlans.find(
               (p: any) =>
                 p.slug?.toLowerCase() === requestedPlan.toLowerCase() ||
                 p.name.toLowerCase().includes(requestedPlan.toLowerCase()) ||
@@ -70,11 +71,13 @@ export default function RegisterPage() {
               return;
             }
           }
-          // Default to middle or first plan
-          setFormData((prev) => ({
-            ...prev,
-            planId: data.plans[1]?.id || data.plans[0].id,
-          }));
+          // Default to middle or first active plan
+          if (activePlans.length > 0) {
+            setFormData((prev) => ({
+              ...prev,
+              planId: activePlans[1]?.id || activePlans[0].id,
+            }));
+          }
         }
       })
       .catch((e) => console.error("Failed to load plans:", e));

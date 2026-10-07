@@ -87,3 +87,65 @@ export async function PATCH(
     return NextResponse.json({ error: "تعذر تحديث الخطة في قاعدة البيانات" }, { status: 500 });
   }
 }
+
+// DELETE /api/super-admin/plans/[id] - Delete or deactivate a plan (SUPER_ADMIN ONLY)
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getCurrentSession();
+    if (session.role !== "SUPER_ADMIN" && !session.isSuperAdmin) {
+      return NextResponse.json(
+        { error: "غير مصرح لك بحذف خطط الاشتراك" },
+        { status: 403 }
+      );
+    }
+
+    const { id } = params;
+    if (!id) {
+      return NextResponse.json({ error: "معرف الخطة مطلوب" }, { status: 400 });
+    }
+
+    const existingPlan = await prisma.subscriptionPlan.findUnique({
+      where: { id },
+      include: {
+        _count: {
+          select: { subscriptions: true },
+        },
+      },
+    });
+
+    if (!existingPlan) {
+      return NextResponse.json({ error: "الخطة غير موجودة" }, { status: 404 });
+    }
+
+    // Check if any subscriptions are linked to this plan
+    if (existingPlan._count.subscriptions > 0) {
+      // If there are existing subscriptions, deactivate it (soft delete) to protect database integrity
+      await prisma.subscriptionPlan.update({
+        where: { id },
+        data: { isActive: false },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: `تم إلغاء تفعيل وإخفاء خطة "${existingPlan.name}" بنجاح من صفحة الهبوط ولوحة التحكم (تم الاحتفاظ بها في السجلات لوجود ${existingPlan._count.subscriptions} مؤسسة مشتركة بها).`,
+      });
+    }
+
+    // Otherwise permanently delete it from the database
+    await prisma.subscriptionPlan.delete({
+      where: { id },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `تم حذف خطة "${existingPlan.name}" نهائياً من قاعدة البيانات بنجاح.`,
+    });
+  } catch (error: any) {
+    console.error("DELETE /api/super-admin/plans/[id] error:", error);
+    return NextResponse.json({ error: "تعذر حذف الخطة" }, { status: 500 });
+  }
+}
+

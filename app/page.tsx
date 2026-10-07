@@ -67,13 +67,14 @@ export default function LandingPage() {
       .then((res) => res.json())
       .then((data) => {
         if (data.plans && data.plans.length > 0) {
-          setPlans(data.plans);
+          const activePlans = data.plans.filter((p: any) => p.isActive !== false);
+          setPlans(activePlans);
         } else {
-          setPlans(defaultPlans);
+          setPlans(defaultPlans.filter((p: any) => p.isActive !== false));
         }
       })
       .catch(() => {
-        setPlans(defaultPlans);
+        setPlans(defaultPlans.filter((p: any) => p.isActive !== false));
       })
       .finally(() => {
         setLoadingPlans(false);
@@ -663,8 +664,8 @@ export default function LandingPage() {
           </div>
 
           {/* Pricing Grid with 3D Flip Cards & Staggered Reveal */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {plans.map((p, idx) => {
+          <div className={`grid grid-cols-1 md:grid-cols-2 ${plans.filter((p: any) => p.isActive !== false).length <= 3 ? "lg:grid-cols-3 max-w-6xl mx-auto" : "lg:grid-cols-4"} gap-6`}>
+            {plans.filter((p: any) => p.isActive !== false).map((p, idx) => {
               const isFree = (p.priceDZD ?? 0) === 0 || p.slug === "free";
               const isPopular = p.slug === "pro" || (!isFree && idx === 2);
               const isFlipped = !!flippedCards[p.id];

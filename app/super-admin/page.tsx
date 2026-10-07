@@ -425,6 +425,51 @@ export default function SuperAdminPage() {
     }
   };
 
+  const handleDeletePlan = async (id: string, name: string) => {
+    if (!window.confirm(`هل أنت متأكد من حذف أو إلغاء تفعيل خطة "${name}"؟`)) return;
+    setActionLoading("deletePlan-" + id);
+    setAlertMsg(null);
+    try {
+      const res = await fetch(`/api/super-admin/plans/${id}`, {
+        method: "DELETE",
+      });
+      const resData = await res.json();
+      if (!res.ok) throw new Error(resData.error || "فشل حذف الخطة");
+      setAlertMsg({ text: resData.message || "تم حذف/إلغاء الخطة بنجاح", type: "success" });
+      setEditingPlan(null);
+      await checkAuthAndFetch();
+    } catch (err: any) {
+      setAlertMsg({ text: err.message || "حدث خطأ أثناء حذف الخطة", type: "error" });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleTogglePlanActive = async (plan: any) => {
+    const newActiveState = !plan.isActive;
+    setActionLoading("togglePlan-" + plan.id);
+    setAlertMsg(null);
+    try {
+      const res = await fetch(`/api/super-admin/plans/${plan.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: newActiveState }),
+      });
+      const resData = await res.json();
+      if (!res.ok) throw new Error(resData.error || "فشل تغيير حالة الخطة");
+      setAlertMsg({
+        text: `تم ${newActiveState ? "تفعيل وإظهار" : "إلغاء وتعتيم"} خطة "${plan.name}" بنجاح في الموقع والداشبورد`,
+        type: "success",
+      });
+      await checkAuthAndFetch();
+    } catch (err: any) {
+      setAlertMsg({ text: err.message || "حدث خطأ أثناء تعديل حالة الخطة", type: "error" });
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+
   const handleCreateInstitution = async (e: React.FormEvent) => {
     e.preventDefault();
     setActionLoading("create");
@@ -1004,7 +1049,18 @@ export default function SuperAdminPage() {
                   >
                     <div>
                       <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-black text-white">{plan.name}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-lg font-black text-white">{plan.name}</h3>
+                          {plan.isActive ? (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                              ✓ نشطة ومعروضة
+                            </span>
+                          ) : (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                              ✕ معطلة ومخفية
+                            </span>
+                          )}
+                        </div>
                         <span className="text-xs font-bold px-3 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/30">
                           {subCount} مؤسسة مشتركة
                         </span>
@@ -1043,17 +1099,38 @@ export default function SuperAdminPage() {
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-800 flex items-center justify-between">
-                      <span className="text-[11px] text-slate-400">
-                        {plan.isActive ? "✓ نشطة في النظام" : "معطلة"}
-                      </span>
+                    <div className="pt-4 border-t border-slate-800 flex items-center justify-between gap-2">
                       <button
-                        onClick={() => handleOpenEditPlan(plan)}
-                        className="px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-sm"
+                        type="button"
+                        onClick={() => handleTogglePlanActive(plan)}
+                        disabled={actionLoading === "togglePlan-" + plan.id}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${
+                          plan.isActive
+                            ? "bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30"
+                            : "bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                        }`}
                       >
-                        <Edit3 className="w-3.5 h-3.5" />
-                        <span>تعديل الخطة والأسعار</span>
+                        <span>{plan.isActive ? "تعطيل وإخفاء" : "تفعيل وإظهار"}</span>
                       </button>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleOpenEditPlan(plan)}
+                          className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-sm"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          <span>تعديل الأسعار</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeletePlan(plan.id, plan.name)}
+                          disabled={actionLoading === "deletePlan-" + plan.id}
+                          title="حذف الخطة"
+                          className="p-2 rounded-xl bg-slate-800 hover:bg-rose-900/40 text-slate-400 hover:text-rose-400 border border-slate-700 transition"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -1204,6 +1281,14 @@ export default function SuperAdminPage() {
                     className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold py-3 rounded-2xl text-xs shadow-lg shadow-indigo-600/30 transition disabled:opacity-50"
                   >
                     {actionLoading === "savePlan" ? "جارٍ الحفظ في قاعدة البيانات..." : "حفظ التغييرات ومزامنة الأسعار"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleDeletePlan(editingPlan.id, editingPlan.name)}
+                    className="px-4 py-3 rounded-2xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 text-xs font-bold transition flex items-center gap-1.5"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                    <span>حذف الخطة</span>
                   </button>
                   <button
                     type="button"

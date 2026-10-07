@@ -39,7 +39,12 @@ export async function GET(req: NextRequest) {
     });
 
     const plans = await prisma.subscriptionPlan.findMany({
-      where: { isActive: true },
+      orderBy: { priceDZD: "asc" },
+      include: {
+        _count: {
+          select: { subscriptions: true },
+        },
+      },
     });
 
     const stats = {
