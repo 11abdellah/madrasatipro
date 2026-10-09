@@ -11,7 +11,6 @@ import {
   Plus,
   RefreshCw,
   Wallet,
-  Sparkles,
   ExternalLink,
 } from "lucide-react";
 import { formatDZD } from "@/lib/utils";

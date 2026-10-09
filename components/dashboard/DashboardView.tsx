@@ -8,7 +8,8 @@ import {
   Wallet,
   TrendingDown,
   TrendingUp,
-  Sparkles,
+  Zap,
+  ShieldCheck,
   Plus,
   ArrowUpRight,
   Layers,
@@ -133,7 +134,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
       {/* Quick Actions Panel */}
       <div className="bg-white rounded-2xl p-3 sm:p-4 border border-slate-200/80 shadow-sm flex flex-wrap items-center justify-between gap-2.5">
         <div className="flex items-center gap-2 text-xs font-extrabold text-slate-700">
-          <Sparkles className="w-4 h-4 text-amber-500" />
+          <Zap className="w-4 h-4 text-amber-500" />
           <span>{isRTL ? "إجراءات سريعة:" : "Quick Actions:"}</span>
         </div>
 
@@ -360,7 +361,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-                    <Sparkles className="w-4 h-4" />
+                    <ShieldCheck className="w-4 h-4" />
                   </div>
                   <div>
                     <h4 className="text-sm font-extrabold text-slate-900">{sub.plan.name}</h4>

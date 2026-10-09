@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
-  Sparkles,
+  CalendarCheck,
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
@@ -34,6 +34,10 @@ import {
   Compass,
   MessageCircle,
   Globe,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { formatDZD } from "@/lib/utils";
 import { ProductShowcaseSection } from "@/components/landing/ProductShowcaseSection";
@@ -43,6 +47,9 @@ export default function LandingPage() {
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">("monthly");
   const [flippedCards, setFlippedCards] = useState<Record<string, boolean>>({});
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activePlanMobileIdx, setActivePlanMobileIdx] = useState(0);
+  const plansScrollRef = React.useRef<HTMLDivElement>(null);
   const [faqOpen, setFaqOpen] = useState<number | null>(0);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [platformSettings, setPlatformSettings] = useState<any>({
@@ -212,6 +219,33 @@ export default function LandingPage() {
     }));
   };
 
+  const activePlans = plans.filter((p: any) => p.isActive !== false);
+
+  const handlePlansScroll = () => {
+    if (!plansScrollRef.current) return;
+    const el = plansScrollRef.current;
+    const scrollLeft = Math.abs(el.scrollLeft);
+    const cardWidth = el.scrollWidth / (activePlans.length || 1);
+    const activeIdx = Math.round(scrollLeft / cardWidth);
+    setActivePlanMobileIdx(Math.min(Math.max(0, activeIdx), Math.max(0, activePlans.length - 1)));
+  };
+
+  const scrollToPlan = (idx: number) => {
+    if (plansScrollRef.current) {
+      const el = plansScrollRef.current;
+      const children = el.children;
+      if (children[idx]) {
+        (children[idx] as HTMLElement).scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+        setActivePlanMobileIdx(idx);
+      }
+    }
+  };
+
+
   const roles = [
     {
       title: "مدير ومالك المؤسسة",
@@ -305,19 +339,19 @@ export default function LandingPage() {
           <Calculator className="w-10 h-10 text-[#F47A3C]" />
         </div>
 
-        {/* Floating Star */}
-        <div className="absolute top-[18%] right-[22%] opacity-25 animate-float-sway text-[#F6C84A]">
-          ✨
+        {/* Floating Educational Symbol */}
+        <div className="absolute top-[18%] right-[22%] opacity-20 animate-float-sway">
+          <BookOpen className="w-8 h-8 text-[#F6C84A]" />
         </div>
       </div>
 
-      {/* Sticky Header with Official MadrasatiPro Logo (Starts Directly at the Top - No Top Bar) */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.03)] transition-all">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      {/* Sticky Header with Official MadrasatiPro Logo */}
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.03)] transition-all">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between">
           
           {/* Official Brand Logo */}
-          <a href="/" className="flex items-center gap-3 group focus:outline-none">
-            <div className="relative h-[52px] sm:h-[60px] w-52 sm:w-64">
+          <a href="/" className="flex items-center gap-2 sm:gap-3 group focus:outline-none">
+            <div className="relative h-[44px] sm:h-[60px] w-44 sm:w-64">
               <Image
                 src="/logo-transparent.png"
                 alt="MadrasatiPro — مدرستي برو"
@@ -328,7 +362,7 @@ export default function LandingPage() {
             </div>
           </a>
 
-          {/* Navigation Links (Security Link Removed) */}
+          {/* Navigation Links (Desktop) */}
           <nav className="hidden lg:flex items-center gap-8 text-xs font-bold text-slate-700">
             <a href="#features" className="hover:text-[#F47A3C] transition">المميزات الرئيسية</a>
             <a href="#roles" className="hover:text-[#F47A3C] transition">تجارب المستخدمين</a>
@@ -336,50 +370,142 @@ export default function LandingPage() {
             <a href="#faq" className="hover:text-[#F47A3C] transition">الأسئلة الشائعة</a>
           </nav>
 
-          {/* Action CTAs */}
-          <div className="flex items-center gap-3">
+          {/* Action CTAs + Mobile Menu Toggle Button */}
+          <div className="flex items-center gap-2 sm:gap-3">
             <a
               href="/login"
-              className="px-4 py-2.5 rounded-full text-xs font-bold text-slate-700 hover:text-[#17191D] hover:bg-orange-100/60 transition"
+              className="hidden sm:inline-flex px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full text-xs font-bold text-slate-700 hover:text-[#17191D] hover:bg-orange-100/60 transition"
             >
               تسجيل الدخول
             </a>
             <a
               href="/register"
-              className="px-5 py-2.5 rounded-full bg-[#18B89C] hover:bg-[#149B83] text-white font-black text-xs shadow-md shadow-teal-500/20 hover:shadow-teal-500/30 transition flex items-center gap-1.5 group"
+              className="px-4 sm:px-5 py-2 sm:py-2.5 rounded-full bg-[#18B89C] hover:bg-[#149B83] text-white font-black text-xs shadow-md shadow-teal-500/20 hover:shadow-teal-500/30 transition flex items-center gap-1.5 group active:scale-95"
             >
               <span>ابدأ مجاناً</span>
               <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
             </a>
+
+            {/* Mobile Menu Hamburger Button */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden p-2 rounded-2xl bg-orange-50 hover:bg-orange-100 text-[#F47A3C] border border-orange-200/80 transition flex items-center justify-center cursor-pointer shadow-xs active:scale-95"
+              aria-label="القائمة الرئيسية"
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Drawer Menu */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden border-t border-orange-100 bg-white/98 backdrop-blur-xl shadow-2xl animate-in slide-in-from-top duration-200">
+            <div className="max-w-7xl mx-auto px-4 py-4 space-y-4">
+              <nav className="flex flex-col space-y-1 text-xs sm:text-sm font-bold text-slate-700">
+                <a
+                  href="#features"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-2xl hover:bg-orange-50 hover:text-[#F47A3C] transition active:scale-98"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <Layers className="w-4 h-4 text-[#F47A3C]" />
+                    <span>المميزات الرئيسية</span>
+                  </span>
+                  <ArrowLeft className="w-3.5 h-3.5 text-slate-400" />
+                </a>
+                <a
+                  href="#roles"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-2xl hover:bg-orange-50 hover:text-[#F47A3C] transition active:scale-98"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <Users className="w-4 h-4 text-[#18B89C]" />
+                    <span>تجارب المستخدمين والأدوار</span>
+                  </span>
+                  <ArrowLeft className="w-3.5 h-3.5 text-slate-400" />
+                </a>
+                <a
+                  href="#pricing"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-2xl hover:bg-orange-50 hover:text-[#F47A3C] transition active:scale-98"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <Wallet className="w-4 h-4 text-amber-500" />
+                    <span>خطط الأسعار والاشتراك</span>
+                  </span>
+                  <ArrowLeft className="w-3.5 h-3.5 text-slate-400" />
+                </a>
+                <a
+                  href="#faq"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center justify-between p-3 rounded-2xl hover:bg-orange-50 hover:text-[#F47A3C] transition active:scale-98"
+                >
+                  <span className="flex items-center gap-2.5">
+                    <HelpCircle className="w-4 h-4 text-indigo-500" />
+                    <span>الأسئلة الشائعة</span>
+                  </span>
+                  <ArrowLeft className="w-3.5 h-3.5 text-slate-400" />
+                </a>
+              </nav>
+
+              <div className="pt-3 border-t border-slate-100 flex flex-col gap-2.5">
+                <a
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 rounded-2xl border border-slate-200 text-slate-800 text-center text-xs font-black hover:bg-slate-50 transition active:scale-95"
+                >
+                  تسجيل الدخول إلى حسابك
+                </a>
+                <a
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 rounded-2xl bg-[#F47A3C] hover:bg-[#d36128] text-white text-center text-xs font-black shadow-lg shadow-orange-500/25 transition active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <span>سجّل مؤسستك الآن مجاناً</span>
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                </a>
+              </div>
+
+              {/* Support Contacts */}
+              <div className="pt-2 text-center text-[11px] text-slate-500 flex items-center justify-center gap-3">
+                <span className="flex items-center gap-1">
+                  <Phone className="w-3 h-3 text-[#18B89C]" />
+                  <span>{platformSettings.supportPhone || "0550 12 34 56"}</span>
+                </span>
+                <span>•</span>
+                <span className="text-[#18B89C] font-bold">دعم تقني 24/7 في الجزائر</span>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section: Story 1 — What is MadrasatiPro? */}
-      <section className="relative pt-12 pb-20 overflow-hidden bg-gradient-to-b from-[#FFF5EE] via-[#FFF9F5] to-white border-b border-orange-100/40 z-10">
+      <section className="relative pt-6 sm:pt-10 lg:pt-14 pb-8 sm:pb-14 lg:pb-20 overflow-hidden bg-gradient-to-b from-[#FFF5EE] via-[#FFF9F5] to-white border-b border-orange-100/40 z-10">
         {/* Soft Decorative Ambient Background */}
-        <div className="absolute top-10 right-1/4 w-[500px] h-[350px] bg-orange-300/15 rounded-full blur-[130px] pointer-events-none" />
-        <div className="absolute top-20 left-10 w-[450px] h-[350px] bg-teal-300/15 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-6 right-1/4 w-[450px] h-[300px] bg-orange-300/15 rounded-full blur-[130px] pointer-events-none" />
+        <div className="absolute top-12 left-10 w-[400px] h-[300px] bg-teal-300/15 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 lg:gap-12 items-center">
             
-            {/* Left Content (Text & Call to Actions in RTL) */}
-            <div className="lg:col-span-7 space-y-6 text-right reveal-on-scroll">
+            {/* Content Column (Text & Call to Actions in RTL) */}
+            <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-right reveal-on-scroll">
               
               {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-orange-200/80 text-xs font-bold text-[#F47A3C] shadow-sm">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-orange-200/80 text-[11px] sm:text-xs font-bold text-[#F47A3C] shadow-xs">
                 <span className="w-2 h-2 rounded-full bg-[#F47A3C] animate-pulse" />
                 <span>أول منصة متقدمة لإدارة المدارس ومراكز الدعم في الجزائر</span>
               </div>
 
               {/* Main Headline */}
-              <h1 className="text-3xl sm:text-5xl lg:text-[52px] font-black text-[#17191D] tracking-tight leading-[1.2]">
+              <h1 className="text-2xl sm:text-4xl lg:text-[50px] font-black text-[#17191D] tracking-tight leading-[1.25] sm:leading-[1.2]">
                 أدر مدرستك ومراكز الدعم التعليمي{" "}
                 <span className="relative inline-block text-[#F47A3C]">
                   بأعلى كفاءة
                   <svg
-                    className="absolute -bottom-2 right-0 w-full text-orange-300/70"
+                    className="absolute -bottom-1.5 right-0 w-full text-orange-300/70"
                     height="8"
                     viewBox="0 0 100 8"
                     preserveAspectRatio="none"
@@ -396,98 +522,95 @@ export default function LandingPage() {
               </h1>
 
               {/* Subheadline */}
-              <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl font-normal">
+              <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed max-w-2xl font-normal">
                 وداعاً للسجلات الورقية وجداول الإكسل المعقدة. مدرستي برو (MadrasatiPro) تجمع لك إدارة الطلاب، الأفواج، جداول التوقيت الذكية، الحضور والغياب، والمحاسبة بالدينار الجزائري (DZD) في منصة سحابية واحدة فائقة السرعة والأمان.
               </p>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3.5 pt-1 sm:pt-2">
                 <a
                   href="/register"
-                  className="px-8 py-4 rounded-2xl bg-[#18B89C] hover:bg-[#149B83] text-white font-black text-sm shadow-xl shadow-teal-600/25 hover:shadow-teal-600/35 transition flex items-center justify-center gap-2 group cursor-pointer animate-cta-attention"
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-[#18B89C] hover:bg-[#149B83] text-white font-black text-xs sm:text-sm shadow-xl shadow-teal-600/25 hover:shadow-teal-600/35 transition flex items-center justify-center gap-2 group cursor-pointer animate-cta-attention active:scale-95 focus:ring-4 focus:ring-teal-500/30 outline-none"
                 >
-                  <span>ابدأ تجربتك المجانية الآن</span>
+                  <span>ابدأ تجربتك الآن</span>
                   <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
                 </a>
 
                 <button
                   type="button"
                   onClick={() => setVideoModalOpen(true)}
-                  className="px-6 py-4 rounded-2xl bg-white hover:bg-orange-50/80 text-slate-800 border border-orange-200/80 font-bold text-sm shadow-sm transition flex items-center justify-center gap-3 cursor-pointer group"
+                  className="px-5 sm:px-6 py-3 sm:py-4 rounded-2xl bg-white hover:bg-orange-50/80 text-slate-800 border border-orange-200/80 font-bold text-xs sm:text-sm shadow-xs transition flex items-center justify-center gap-2.5 cursor-pointer group active:scale-95"
                 >
-                  <div className="w-8 h-8 rounded-full bg-[#F47A3C] text-white flex items-center justify-center shadow-md shadow-orange-500/30 group-hover:scale-110 transition-transform">
-                    <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#F47A3C] text-white flex items-center justify-center shadow-md shadow-orange-500/30 group-hover:scale-110 transition-transform">
+                    <Play className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current ml-0.5" />
                   </div>
                   <span>شاهد كيف يعمل النظام</span>
                 </button>
               </div>
 
               {/* Quick Trust Highlights */}
-              <div className="pt-6 grid grid-cols-3 gap-4 border-t border-orange-100 max-w-lg text-slate-600 text-xs">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#18B89C] shrink-0" />
+              <div className="pt-3 sm:pt-5 grid grid-cols-3 gap-2 sm:gap-4 border-t border-orange-100 max-w-lg text-slate-600 text-[11px] sm:text-xs">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#18B89C] shrink-0" />
                   <span className="font-semibold">تغطية 58 ولاية</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#18B89C] shrink-0" />
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#18B89C] shrink-0" />
                   <span className="font-semibold">منع تضارب القاعات</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#18B89C] shrink-0" />
-                  <span className="font-semibold">سهولة الدفع</span>
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#18B89C] shrink-0" />
+                  <span className="font-semibold">فوترة بالدينار DZD</span>
                 </div>
               </div>
             </div>
 
-            {/* Right Visual Composition (Hero Cutout + Floating Badges + Educational Objects) */}
-            <div className="lg:col-span-5 relative flex items-center justify-center reveal-scale delay-200">
-              {/* Outer decorative halo */}
-              <div className="relative w-full max-w-[420px] aspect-[3/4]">
+            {/* Right Visual Composition (Complete Uncropped Hero Illustration + Floating Badges) */}
+            <div className="lg:col-span-5 relative flex items-center justify-center reveal-scale delay-200 mt-4 lg:mt-0">
+              <div className="relative w-full max-w-[340px] sm:max-w-[400px] lg:max-w-[460px] mx-auto flex items-center justify-center">
                 
-                {/* Background decorative soft colored shapes */}
-                <div className="absolute inset-0 rounded-[40px] bg-gradient-to-tr from-orange-200/50 via-teal-100/40 to-yellow-100/60 transform rotate-2 scale-95" />
-                <div className="absolute inset-0 rounded-[40px] bg-white shadow-xl shadow-orange-950/5 transform -rotate-2 border border-orange-100/80" />
+                {/* Soft Ambient Radial Halo behind the illustration */}
+                <div className="absolute inset-0 w-[85%] h-[85%] mx-auto my-auto rounded-full bg-gradient-to-tr from-orange-300/25 via-teal-200/20 to-amber-200/25 blur-3xl pointer-events-none" />
 
-                {/* Main Hero Student Cutout Image */}
-                <div className="relative w-full h-full rounded-[36px] overflow-hidden flex items-end justify-center">
+                {/* Complete, Uncropped Student Hero Image */}
+                <div className="relative z-10 w-full flex items-center justify-center">
                   <Image
                     src="/hero-student.jpg"
-                    alt="طالب جزائري يستخدم منصة مدرستي برو"
-                    fill
+                    alt="طالبة جزائرية تستخدم منصة مدرستي برو لإدارة المدارس ومراكز الدعم"
+                    width={896}
+                    height={1200}
                     priority
-                    className="object-cover object-top scale-105"
+                    className="w-auto h-auto max-h-[380px] sm:max-h-[460px] lg:max-h-[520px] max-w-full object-contain mx-auto drop-shadow-md select-none"
                   />
-                  {/* Soft subtle bottom fade gradient */}
-                  <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-white via-white/40 to-transparent pointer-events-none" />
                 </div>
 
                 {/* Floating UI Badge 1: New Students */}
-                <div className="absolute -top-4 -right-4 bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl p-3 shadow-lg shadow-black/5 animate-float-slow z-20 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-black">
-                    <Users className="w-5 h-5" />
+                <div className="absolute top-2 right-1 sm:-top-3 sm:-right-3 bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl p-2.5 sm:p-3 shadow-lg shadow-black/5 animate-float-slow z-20 flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-black">
+                    <Users className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                      <p className="text-xs font-extrabold text-[#17191D]">+28 طالب جديد</p>
+                    <div className="flex items-center gap-1 sm:gap-1.5">
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-ping" />
+                      <p className="text-[11px] sm:text-xs font-extrabold text-[#17191D]">+28 طالب جديد</p>
                     </div>
-                    <p className="text-[10px] text-slate-500">تم تسجيلهم هذا الأسبوع</p>
+                    <p className="text-[9px] sm:text-[10px] text-slate-500">تم تسجيلهم هذا الأسبوع</p>
                   </div>
                 </div>
 
                 {/* Floating UI Badge 2: Attendance Rate */}
-                <div className="absolute bottom-6 -left-6 bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl p-3.5 shadow-lg shadow-black/5 animate-float-reverse z-20 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-[#F47A3C] flex items-center justify-center font-black">
-                    <Clock className="w-5 h-5" />
+                <div className="absolute bottom-2 left-1 sm:bottom-4 sm:-left-4 bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl p-2.5 sm:p-3.5 shadow-lg shadow-black/5 animate-float-reverse z-20 flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-orange-500/10 text-[#F47A3C] flex items-center justify-center font-black">
+                    <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
                   <div>
-                    <p className="text-[11px] font-bold text-slate-500">نسبة الحضور اليوم</p>
-                    <p className="text-sm font-black text-[#17191D]">94.8% — انضباط عالٍ</p>
+                    <p className="text-[10px] sm:text-[11px] font-bold text-slate-500">نسبة الحضور اليوم</p>
+                    <p className="text-xs sm:text-sm font-black text-[#17191D]">94.8% — انضباط عالٍ</p>
                   </div>
                 </div>
 
-                {/* Floating UI Badge 3: Invoicing / Finance */}
-                <div className="absolute top-28 -left-8 bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl p-2.5 shadow-lg shadow-black/5 animate-float-gentle z-20 flex items-center gap-2.5">
+                {/* Floating UI Badge 3: Invoicing / Finance (Shown on sm+) */}
+                <div className="hidden sm:flex absolute top-28 -left-6 bg-white/95 backdrop-blur-md border border-slate-100 rounded-2xl p-2.5 shadow-lg shadow-black/5 animate-float-gentle z-20 items-center gap-2.5">
                   <div className="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-600 flex items-center justify-center">
                     <Wallet className="w-4 h-4" />
                   </div>
@@ -498,14 +621,15 @@ export default function LandingPage() {
                 </div>
 
                 {/* Floating Educational 3D Object 1: Graduation Cap */}
-                <div className="absolute -bottom-4 right-10 bg-gradient-to-tr from-[#17191D] to-[#2F3442] text-white p-2.5 rounded-2xl shadow-xl animate-float-sway z-20">
-                  <GraduationCap className="w-6 h-6 text-yellow-400" />
+                <div className="absolute bottom-2 right-4 sm:-bottom-3 sm:right-8 bg-gradient-to-tr from-[#17191D] to-[#2F3442] text-white p-2 sm:p-2.5 rounded-2xl shadow-xl animate-float-sway z-20">
+                  <GraduationCap className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400" />
                 </div>
 
-                {/* Floating Educational 3D Object 2: Sparkle Badge */}
-                <div className="absolute top-1/2 -right-6 w-9 h-9 rounded-full bg-gradient-to-tr from-[#F47A3C] to-yellow-400 text-white flex items-center justify-center shadow-lg animate-float-gentle z-20">
-                  <Sparkles className="w-5 h-5" />
+                {/* Floating Educational 3D Object 2: Academic Excellence Award Badge (Replaced Sparkle) */}
+                <div className="absolute top-1/3 -right-2 sm:-right-4 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-[#F47A3C] to-amber-500 text-white flex items-center justify-center shadow-lg animate-float-gentle z-20">
+                  <Award className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                 </div>
+
               </div>
             </div>
 
@@ -513,33 +637,93 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trust Bar & Numbers: Story 2 — Why is MadrasatiPro Useful? */}
-      <section className="py-12 bg-white border-b border-slate-100 z-10 relative">
+      {/* Trust Bar & Numbers: Story 2 — Refined Educational Metrics Showcase */}
+      <section className="py-8 sm:py-12 bg-white border-y border-slate-150 z-10 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-6 text-right">
             
-            <div className="space-y-1.5 p-4 rounded-2xl bg-[#FFF9F5] border border-orange-100/60 reveal-scale delay-100">
-              <p className="text-3xl sm:text-4xl font-black text-[#F47A3C]">58 ولاية</p>
-              <p className="text-xs font-bold text-slate-700">تغطية وطنية شاملة</p>
-              <p className="text-[11px] text-slate-500">جاهز للعمل في كل المراكز والولايات</p>
+            {/* Stat Card 1: Students */}
+            <div className="group p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-150 shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between active:scale-98 relative overflow-hidden">
+              {/* Top hairline accent bar */}
+              <div className="absolute top-0 right-0 left-0 h-[2px] bg-gradient-to-r from-teal-500 to-emerald-400" />
+              
+              <div className="flex items-center justify-between mb-3 text-slate-500">
+                <span className="text-xs font-bold text-slate-500 tracking-wide">قاعدة البيانات</span>
+                <Users className="w-5 h-5 text-teal-600 transition-transform group-hover:scale-110" />
+              </div>
+              
+              <div className="space-y-0.5">
+                <p className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                  +15,000
+                </p>
+                <p className="text-sm font-bold text-slate-800 pt-1">تلميذ مسجل بالنظام</p>
+                <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                  يديرون اشتراكاتهم وحصصهم يومياً
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-1.5 p-4 rounded-2xl bg-[#F0FAF7] border border-teal-100/60 reveal-scale delay-200">
-              <p className="text-3xl sm:text-4xl font-black text-[#18B89C]">+15,000</p>
-              <p className="text-xs font-bold text-slate-700">تلميذ مسجل بالنظام</p>
-              <p className="text-[11px] text-slate-500">يديرون اشتراكاتهم وحصصهم يومياً</p>
+            {/* Stat Card 2: Coverage */}
+            <div className="group p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-150 shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between active:scale-98 relative overflow-hidden">
+              {/* Top hairline accent bar */}
+              <div className="absolute top-0 right-0 left-0 h-[2px] bg-gradient-to-r from-[#F47A3C] to-amber-400" />
+
+              <div className="flex items-center justify-between mb-3 text-slate-500">
+                <span className="text-xs font-bold text-slate-500 tracking-wide">الانتشار الجغرافي</span>
+                <Building2 className="w-5 h-5 text-[#F47A3C] transition-transform group-hover:scale-110" />
+              </div>
+
+              <div className="space-y-0.5">
+                <p className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                  58 ولاية
+                </p>
+                <p className="text-sm font-bold text-slate-800 pt-1">تغطية وطنية شاملة</p>
+                <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                  جاهز للعمل في كل المراكز والولايات
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-1.5 p-4 rounded-2xl bg-[#F4F5FB] border border-indigo-100/60 reveal-scale delay-300">
-              <p className="text-3xl sm:text-4xl font-black text-indigo-600">0 تضارب</p>
-              <p className="text-xs font-bold text-slate-700">في القاعات والأساتذة</p>
-              <p className="text-[11px] text-slate-500">بفضل محرك الجدولة الذكي الآلي</p>
+            {/* Stat Card 3: Zero Collision */}
+            <div className="group p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-150 shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between active:scale-98 relative overflow-hidden">
+              {/* Top hairline accent bar */}
+              <div className="absolute top-0 right-0 left-0 h-[2px] bg-gradient-to-r from-purple-500 to-indigo-500" />
+
+              <div className="flex items-center justify-between mb-3 text-slate-500">
+                <span className="text-xs font-bold text-slate-500 tracking-wide">محرك الجدولة</span>
+                <CalendarCheck className="w-5 h-5 text-[#8B7CFF] transition-transform group-hover:scale-110" />
+              </div>
+
+              <div className="space-y-0.5">
+                <p className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                  0 تضارب
+                </p>
+                <p className="text-sm font-bold text-slate-800 pt-1">في القاعات والأساتذة</p>
+                <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                  بفضل محرك الجدولة الذكي الآلي
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-1.5 p-4 rounded-2xl bg-[#FEF9EE] border border-amber-100/60 reveal-scale delay-400">
-              <p className="text-3xl sm:text-4xl font-black text-amber-600">99.9%</p>
-              <p className="text-xs font-bold text-slate-700">جاهزية واستقرار سحابي</p>
-              <p className="text-[11px] text-slate-500">سهولة الدفع</p>
+            {/* Stat Card 4: Uptime & Cloud */}
+            <div className="group p-5 sm:p-6 rounded-2xl sm:rounded-3xl bg-white border border-slate-150 shadow-xs hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between active:scale-98 relative overflow-hidden">
+              {/* Top hairline accent bar */}
+              <div className="absolute top-0 right-0 left-0 h-[2px] bg-gradient-to-r from-amber-500 to-yellow-400" />
+
+              <div className="flex items-center justify-between mb-3 text-slate-500">
+                <span className="text-xs font-bold text-slate-500 tracking-wide">الجاهزية السحابية</span>
+                <ShieldCheck className="w-5 h-5 text-amber-600 transition-transform group-hover:scale-110" />
+              </div>
+
+              <div className="space-y-0.5">
+                <p className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                  99.9%
+                </p>
+                <p className="text-sm font-bold text-slate-800 pt-1">جاهزية واستقرار سحابي</p>
+                <p className="text-xs text-slate-500 font-normal leading-relaxed">
+                  سهولة وسرعة الوصول دون انقطاع
+                </p>
+              </div>
             </div>
 
           </div>
@@ -663,9 +847,42 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Pricing Grid with 3D Flip Cards & Staggered Reveal */}
-          <div className={`grid grid-cols-1 md:grid-cols-2 ${plans.filter((p: any) => p.isActive !== false).length <= 3 ? "lg:grid-cols-3 max-w-6xl mx-auto" : "lg:grid-cols-4"} gap-6`}>
-            {plans.filter((p: any) => p.isActive !== false).map((p, idx) => {
+          {/* Mobile Swipe Hint & Controls */}
+          <div className="flex md:hidden items-center justify-between px-3 py-2.5 text-xs font-bold text-slate-700 bg-orange-100/60 rounded-2xl border border-orange-200/70 shadow-xs">
+            <div className="flex items-center gap-1.5 text-[#F47A3C]">
+              <span>👈 اسحب أفقياً لاستعراض الخطط ({activePlans.length})</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={() => scrollToPlan(Math.max(0, activePlanMobileIdx - 1))}
+                disabled={activePlanMobileIdx === 0}
+                className="p-1.5 rounded-xl bg-white border border-orange-200 text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed shadow-xs active:scale-95 transition"
+                aria-label="الخطة السابقة"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scrollToPlan(Math.min(activePlans.length - 1, activePlanMobileIdx + 1))}
+                disabled={activePlanMobileIdx === activePlans.length - 1}
+                className="p-1.5 rounded-xl bg-white border border-orange-200 text-slate-700 disabled:opacity-30 disabled:cursor-not-allowed shadow-xs active:scale-95 transition"
+                aria-label="الخطة التالية"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Pricing Container: Horizontal swipe carousel on mobile, clean responsive grid on desktop */}
+          <div
+            ref={plansScrollRef}
+            onScroll={handlePlansScroll}
+            className={`flex md:grid overflow-x-auto md:overflow-visible pb-6 md:pb-0 pt-2 px-4 md:px-0 gap-5 md:gap-6 snap-x snap-mandatory scroll-smooth no-scrollbar -mx-4 sm:mx-0 ${
+              activePlans.length <= 3 ? "md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto" : "md:grid-cols-2 lg:grid-cols-4"
+            }`}
+          >
+            {activePlans.map((p, idx) => {
               const isFree = (p.priceDZD ?? 0) === 0 || p.slug === "free";
               const isPopular = p.slug === "pro" || (!isFree && idx === 2);
               const isFlipped = !!flippedCards[p.id];
@@ -679,7 +896,7 @@ export default function LandingPage() {
               return (
                 <div
                   key={p.id}
-                  className={`flip-card-perspective h-[580px] w-full flip-card-container group reveal-on-scroll ${delayClass}`}
+                  className={`flip-card-perspective h-[580px] w-[84vw] max-w-[340px] shrink-0 snap-center md:w-full md:max-w-none md:shrink flip-card-container group reveal-on-scroll ${delayClass}`}
                 >
                   <div
                     className={`flip-card-inner h-full ${isFlipped ? "is-flipped manual-flip" : ""}`}
@@ -687,7 +904,7 @@ export default function LandingPage() {
                     
                     {/* FRONT SIDE OF 3D CARD */}
                     <div
-                      className={`flip-card-front h-full p-8 flex flex-col justify-between bg-white border rounded-3xl shadow-lg transition-all ${
+                      className={`flip-card-front h-full p-6 sm:p-8 flex flex-col justify-between bg-white border rounded-3xl shadow-lg transition-all ${
                         isPopular
                           ? "border-[#F47A3C] ring-2 ring-orange-500/20 shadow-orange-500/10"
                           : "border-slate-200"
@@ -761,7 +978,7 @@ export default function LandingPage() {
                         <button
                           type="button"
                           onClick={() => toggleFlip(p.id)}
-                          className="w-full py-2.5 rounded-xl border border-orange-200 text-[#F47A3C] hover:bg-orange-50 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                          className="w-full py-2.5 rounded-xl border border-orange-200 text-[#F47A3C] hover:bg-orange-50 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-98"
                         >
                           <RotateCw className="w-3.5 h-3.5" />
                           <span>اقلب البطاقة للتفاصيل والمميزات (3D)</span>
@@ -769,7 +986,7 @@ export default function LandingPage() {
 
                         <a
                           href={`/register?plan=${p.id}&billing=${billingPeriod}`}
-                          className={`w-full py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition cursor-pointer ${
+                          className={`w-full py-3.5 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition cursor-pointer active:scale-98 ${
                             isPopular
                               ? "bg-[#F47A3C] hover:bg-[#d36128] text-white shadow-lg shadow-orange-500/25"
                               : displayPrice === 0
@@ -785,7 +1002,7 @@ export default function LandingPage() {
 
                     {/* BACK SIDE OF 3D CARD */}
                     <div
-                      className="flip-card-back h-full p-8 flex flex-col justify-between bg-slate-900 text-white border border-slate-800 rounded-3xl shadow-2xl"
+                      className="flip-card-back h-full p-6 sm:p-8 flex flex-col justify-between bg-slate-900 text-white border border-slate-800 rounded-3xl shadow-2xl"
                     >
                       <div className="space-y-4">
                         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -822,7 +1039,7 @@ export default function LandingPage() {
                         <button
                           type="button"
                           onClick={() => toggleFlip(p.id)}
-                          className="w-full py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer"
+                          className="w-full py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:bg-slate-800 font-bold text-xs flex items-center justify-center gap-1.5 transition cursor-pointer active:scale-98"
                         >
                           <RotateCw className="w-3.5 h-3.5" />
                           <span>⟲ العودة إلى واجهة السعر</span>
@@ -830,7 +1047,7 @@ export default function LandingPage() {
 
                         <a
                           href={`/register?plan=${p.id}&billing=${billingPeriod}`}
-                          className="w-full py-3.5 rounded-2xl bg-[#18B89C] hover:bg-[#149B83] text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 transition cursor-pointer"
+                          className="w-full py-3.5 rounded-2xl bg-[#18B89C] hover:bg-[#149B83] text-white font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 transition cursor-pointer active:scale-98"
                         >
                           <span>تأكيد الاشتراك في الخطة</span>
                           <ArrowLeft className="w-3.5 h-3.5" />
@@ -842,6 +1059,23 @@ export default function LandingPage() {
                 </div>
               );
             })}
+          </div>
+
+          {/* Mobile Carousel Pagination Dots */}
+          <div className="flex md:hidden items-center justify-center gap-2 pt-1">
+            {activePlans.map((planItem, dIdx) => (
+              <button
+                key={planItem.id}
+                type="button"
+                onClick={() => scrollToPlan(dIdx)}
+                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  activePlanMobileIdx === dIdx
+                    ? "w-8 bg-[#F47A3C] shadow-sm shadow-orange-500/50"
+                    : "w-2.5 bg-slate-300 hover:bg-slate-400"
+                }`}
+                aria-label={`الانتقال إلى خطة ${planItem.name}`}
+              />
+            ))}
           </div>
 
         </div>
@@ -1086,7 +1320,7 @@ export default function LandingPage() {
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-2xl w-full text-right space-y-4">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#F47A3C]" />
+                <Play className="w-4 h-4 text-[#F47A3C] fill-current" />
                 <span>جولة تعريفية في نظام مدرستي برو لإدارة المدارس</span>
               </h3>
               <button

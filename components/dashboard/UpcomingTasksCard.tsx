@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ChevronLeft, ChevronRight, PenTool, BookOpen, AlertCircle, CheckCircle, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, PenTool, BookOpen, AlertCircle, CheckCircle } from "lucide-react";
 
 interface QuickTask {
   id: string;

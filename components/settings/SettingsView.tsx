@@ -14,7 +14,6 @@ import {
   Sliders,
   User,
   Lock,
-  Sparkles,
   Upload,
   Trash2,
 } from "lucide-react";

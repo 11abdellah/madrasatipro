@@ -8,7 +8,6 @@ import {
   Mail,
   LogOut,
   RefreshCw,
-  Sparkles,
   Compass,
   MessageCircle,
 } from "lucide-react";

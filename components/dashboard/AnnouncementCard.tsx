@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Megaphone, Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
+import { Megaphone, GraduationCap, ArrowRight, ArrowLeft } from "lucide-react";
 
 interface AnnouncementCardProps {
   locale?: string;
@@ -27,7 +27,7 @@ export const AnnouncementCard: React.FC<AnnouncementCardProps> = ({
         </div>
 
         <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-white/10 text-indigo-200 border border-white/10 flex items-center gap-1">
-          <Sparkles className="w-3 h-3 text-amber-400" />
+          <GraduationCap className="w-3 h-3 text-amber-400" />
           <span>{isRTL ? "BAC 2026" : "Exam Prep"}</span>
         </span>
       </div>

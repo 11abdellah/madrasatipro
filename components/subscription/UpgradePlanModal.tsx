@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Check, Sparkles, Zap, ArrowLeft, ArrowRight, ShieldCheck, Building2 } from "lucide-react";
+import { X, Check, Zap, ArrowLeft, ArrowRight, ShieldCheck, Building2 } from "lucide-react";
 import { formatDZD } from "@/lib/utils";
 
 interface UpgradePlanModalProps {
@@ -205,7 +205,7 @@ export const UpgradePlanModal: React.FC<UpgradePlanModalProps> = ({
         {/* Modal Header */}
         <div className="text-center max-w-xl mx-auto mb-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-bold mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
+            <ShieldCheck className="w-3.5 h-3.5" />
             <span>ترقية خطة الاشتراك</span>
           </div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">

@@ -12,7 +12,7 @@ import {
   Plus,
   RefreshCw,
   Wallet,
-  Sparkles,
+  GraduationCap,
   ExternalLink,
   Search,
   Filter,
@@ -679,7 +679,7 @@ export default function SuperAdminPage() {
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-bold text-slate-400">الأساتذة النشطون</span>
               <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
-                <Sparkles className="w-4 h-4" />
+                <GraduationCap className="w-4 h-4" />
               </div>
             </div>
             <div className="text-3xl font-extrabold text-white mb-1">{stats.totalTeachersAcrossSaaS}</div>

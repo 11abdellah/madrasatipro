@@ -15,7 +15,6 @@ import {
   ChevronDown,
   Globe,
   Building2,
-  Sparkles,
   Command,
   Sliders,
   LogOut,
