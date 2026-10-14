@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, DoorOpen, Users, Hash, FileText, Loader2, Sparkles } from "lucide-react";
+import { X, DoorOpen, Users, Hash, FileText, Loader2 } from "lucide-react";
 import { Locale } from "@/types";
 
 interface AddClassroomModalProps {
@@ -195,7 +195,7 @@ export const AddClassroomModal: React.FC<AddClassroomModalProps> = ({
               disabled={loading}
               className="px-6 py-2.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-extrabold flex items-center gap-2 shadow-md transition active:scale-95 disabled:opacity-50"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4 text-[#F47A3C]" />}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <DoorOpen className="w-4 h-4 text-[#F47A3C]" />}
               <span>{isRTL ? "حفظ وتثبيت القاعة" : "Save Classroom"}</span>
             </button>
           </div>

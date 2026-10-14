@@ -225,20 +225,249 @@ body {
   animation: float-ruler 8s ease-in-out infinite;
 }
 
-/* Subtle Periodic Attention Glow & Gentle Scale for Primary Landing CTA */
+/* Subtle Periodic Attention Glow & Gentle Scale for Primary Landing CTA (Controlled Rest & Breathe) */
 @keyframes cta-attention {
-  0%, 100% {
+  0%, 70%, 100% {
     transform: scale(1);
-    box-shadow: 0 10px 25px -5px rgba(24, 184, 156, 0.28), 0 8px 10px -6px rgba(24, 184, 156, 0.2);
+    box-shadow: 0 10px 25px -5px rgba(24, 184, 156, 0.25), 0 4px 10px -4px rgba(24, 184, 156, 0.15);
   }
-  50% {
+  85% {
     transform: scale(1.02);
-    box-shadow: 0 18px 35px -3px rgba(24, 184, 156, 0.45), 0 0 24px 3px rgba(24, 184, 156, 0.28);
+    box-shadow: 0 16px 36px -4px rgba(24, 184, 156, 0.45), 0 0 22px 2px rgba(24, 184, 156, 0.25);
   }
 }
 
 .animate-cta-attention {
-  animation: cta-attention 4s ease-in-out infinite;
+  animation: cta-attention 6s ease-in-out infinite;
+}
+
+/* Dimensional 3D Floating Objects Animations */
+@keyframes float-obj-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(2deg);
+  }
+  50% {
+    transform: translate3d(0, -9px, 0) rotate(2.8deg);
+  }
+}
+
+@keyframes float-obj-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(-2deg);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0) rotate(-1.5deg);
+  }
+}
+
+@keyframes float-obj-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(1.5deg);
+  }
+  50% {
+    transform: translate3d(0, -7px, 0) rotate(2.2deg);
+  }
+}
+
+@keyframes float-obj-4 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(-1.5deg);
+  }
+  50% {
+    transform: translate3d(0, -9px, 0) rotate(-2deg);
+  }
+}
+
+.animate-float-obj-1 {
+  animation: float-obj-1 6.5s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-obj-2 {
+  animation: float-obj-2 7.2s ease-in-out infinite 0.7s;
+  will-change: transform;
+}
+
+.animate-float-obj-3 {
+  animation: float-obj-3 5.8s ease-in-out infinite 1.4s;
+  will-change: transform;
+}
+
+.animate-float-obj-4 {
+  animation: float-obj-4 6.8s ease-in-out infinite 0.3s;
+  will-change: transform;
+}
+
+/* Premium Floating Typography Animations for Hero Features */
+@keyframes float-typo-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -7px, 0);
+  }
+}
+
+@keyframes float-typo-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, 6px, 0);
+  }
+}
+
+@keyframes float-typo-3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes float-typo-4 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, 7px, 0);
+  }
+}
+
+@keyframes float-typo-5 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+@keyframes float-typo-6 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, 5px, 0);
+  }
+}
+
+.animate-float-typo-1 {
+  animation: float-typo-1 5.2s ease-in-out infinite;
+  will-change: transform;
+}
+.animate-float-typo-2 {
+  animation: float-typo-2 6.4s ease-in-out infinite 0.6s;
+  will-change: transform;
+}
+.animate-float-typo-3 {
+  animation: float-typo-3 4.8s ease-in-out infinite 1.2s;
+  will-change: transform;
+}
+.animate-float-typo-4 {
+  animation: float-typo-4 5.9s ease-in-out infinite 0.3s;
+  will-change: transform;
+}
+.animate-float-typo-5 {
+  animation: float-typo-5 6.1s ease-in-out infinite 1.5s;
+  will-change: transform;
+}
+.animate-float-typo-6 {
+  animation: float-typo-6 5.5s ease-in-out infinite 0.9s;
+  will-change: transform;
+}
+
+/* Ambient Background Drift */
+@keyframes ambient-drift-slow {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.16;
+  }
+  50% {
+    transform: translate3d(20px, -15px, 0) scale(1.08);
+    opacity: 0.24;
+  }
+}
+
+@keyframes ambient-drift-reverse {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.18;
+  }
+  50% {
+    transform: translate3d(-18px, 16px, 0) scale(1.06);
+    opacity: 0.26;
+  }
+}
+
+.animate-ambient-slow {
+  animation: ambient-drift-slow 14s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-ambient-reverse {
+  animation: ambient-drift-reverse 16s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* Ecosystem SVG Dash Beam & Pulse Rings */
+@keyframes dash-flow {
+  0% {
+    stroke-dashoffset: 36;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-dash-flow {
+  animation: dash-flow 1.8s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0%, 100% {
+    transform: scale(0.96);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.2;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 3.5s ease-in-out infinite;
+}
+
+@keyframes float-bokeh-1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.22;
+  }
+  50% {
+    transform: translate3d(24px, -20px, 0) scale(1.18);
+    opacity: 0.42;
+  }
+}
+
+@keyframes float-bokeh-2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.18;
+  }
+  50% {
+    transform: translate3d(-25px, 22px, 0) scale(1.15);
+    opacity: 0.38;
+  }
+}
+
+.animate-bokeh-1 {
+  animation: float-bokeh-1 9s ease-in-out infinite;
+}
+
+.animate-bokeh-2 {
+  animation: float-bokeh-2 12s ease-in-out infinite;
 }
 
 /* Accessibility: Reduced Motion */
@@ -267,9 +496,35 @@ body {
   .animate-float-sway,
   .animate-float-pencil,
   .animate-float-ruler,
-  .animate-cta-attention {
+  .animate-cta-attention,
+  .animate-float-typo-1,
+  .animate-float-typo-2,
+  .animate-float-typo-3,
+  .animate-float-typo-4,
+  .animate-float-typo-5,
+  .animate-float-typo-6,
+  .animate-ambient-slow,
+  .animate-ambient-reverse,
+  .animate-dash-flow,
+  .animate-pulse-ring,
+  .animate-bokeh-1,
+  .animate-bokeh-2,
+  .animate-float-obj-1,
+  .animate-float-obj-2,
+  .animate-float-obj-3,
+  .animate-float-obj-4 {
     animation: none !important;
     transform: none !important;
   }
 }
+
+/* Hide scrollbar utility for clean mobile horizontal scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 

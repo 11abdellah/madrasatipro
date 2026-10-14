@@ -13,10 +13,10 @@ import {
   EyeOff,
   CheckCircle2,
   GraduationCap,
-  Sparkles,
   ArrowLeft,
   Compass,
   Calculator,
+  BookOpen,
   Loader2,
 } from "lucide-react";
 
@@ -222,8 +222,8 @@ export default function LoginPage() {
         <div className="absolute bottom-20 left-[14%] opacity-20 animate-float-gentle">
           <Calculator className="w-9 h-9 text-[#F47A3C]" />
         </div>
-        <div className="absolute top-28 right-[15%] opacity-25 animate-float-sway text-[#F6C84A]">
-          ✨
+        <div className="absolute top-28 right-[15%] opacity-20 animate-float-sway">
+          <BookOpen className="w-8 h-8 text-[#F6C84A]" />
         </div>
       </div>
 

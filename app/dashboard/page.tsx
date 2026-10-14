@@ -18,7 +18,7 @@ import { QuickSearchModal } from "@/components/layout/QuickSearchModal";
 import { NotificationPanel } from "@/components/layout/NotificationPanel";
 import { Locale, Student } from "@/types";
 import { ALGERIAN_WILAYAS } from "@/lib/constants/algeria";
-import { ArrowRight, ShieldCheck, Sparkles, AlertTriangle } from "lucide-react";
+import { ArrowRight, ShieldCheck, AlertTriangle } from "lucide-react";
 
 export default function DashboardPage() {
   const [currentTab, setCurrentTab] = useState("dashboard");

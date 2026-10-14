@@ -8,7 +8,6 @@ import {
   AlertCircle,
   Send,
   Check,
-  Sparkles,
   Users,
   Calendar,
   Layers,

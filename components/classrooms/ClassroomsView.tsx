@@ -12,7 +12,6 @@ import {
   Trash2,
   Loader2,
   RefreshCw,
-  Sparkles,
   CheckCircle,
   Building2,
   Hash,
@@ -110,7 +109,7 @@ export const ClassroomsView: React.FC<ClassroomsViewProps> = ({ locale }) => {
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-950 text-white px-5 py-3 rounded-full text-xs font-bold shadow-2xl flex items-center gap-2 border border-slate-700 animate-in fade-in slide-in-from-top-4">
-          <Sparkles className="w-4 h-4 text-emerald-400" />
+          <CheckCircle className="w-4 h-4 text-emerald-400" />
           <span>{toastMessage}</span>
         </div>
       )}

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Check, User, Briefcase, Wallet, FileText, Loader2, Sparkles } from "lucide-react";
+import { X, Check, User, Briefcase, Wallet, FileText, Loader2, GraduationCap } from "lucide-react";
 import { ALGERIAN_WILAYAS } from "@/lib/constants/algeria";
 import { Locale, Teacher } from "@/types";
 
@@ -141,7 +141,7 @@ export const AddTeacherModal: React.FC<AddTeacherModalProps> = ({
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-xl bg-slate-950 text-white flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-amber-400" />
+              <GraduationCap className="w-4 h-4 text-amber-400" />
             </div>
             <div>
               <h2 className="text-base font-extrabold text-slate-900">

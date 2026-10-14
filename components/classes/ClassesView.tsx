@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   X,
   AlertTriangle,
-  Sparkles,
   Edit2,
   Trash2,
   Loader2,
